@@ -61,10 +61,8 @@ struct BybitClient::Impl {
     trading::Credentials creds;
     Config cfg;
 
-    // costante interna (non modificabile dall'utente)
     static constexpr double AMEND_THRESHOLD_PCT = 0.002;
 
-    // stato + sync (ex-globali)
     std::mutex mtx;
     std::condition_variable cv;
     std::deque<PriceUpdate> price_q;
@@ -144,7 +142,6 @@ struct BybitClient::Impl {
         stop = true;
         cv.notify_all();
     
-        // chiusure best-effort
         public_ws.close();
         trade_ws.close();
         private_ws.close();
@@ -171,9 +168,7 @@ struct BybitClient::Impl {
             try {
                 json data = json::parse(msg->str);
 
-                // ignora response di subscribe
                 if (data.contains("success") || data.contains("ret_msg") || data.contains("retCode")) {
-                    // handler not found => stop
                     if (data.contains("ret_msg")) {
                         auto ret = data["ret_msg"].get<std::string>();
                         if (ret.find("handler not found") != std::string::npos) {
@@ -245,7 +240,6 @@ struct BybitClient::Impl {
                     return;
                 }
 
-                // esempi come nel tuo codice
                 if (update.contains("retCode") && update["retCode"] == 10001 &&
                     update.contains("retMsg") && update["retMsg"] == "order not modified") {
                     std::lock_guard<std::mutex> lk(mtx);
@@ -297,7 +291,6 @@ struct BybitClient::Impl {
             try {
                 json update = json::parse(msg->str);
 
-                // fill completo (leavesQty == 0) => stop
                 if (update.contains("topic") && update["topic"] == "order" &&
                     update.contains("data") && update["data"].is_array() && !update["data"].empty()) {
 
@@ -409,7 +402,6 @@ struct BybitClient::Impl {
         stop = true;
         cv.notify_all();
 
-        // chiudi ws (safe best-effort)
         public_ws.close();
         private_ws.close();
         trade_ws.close();
@@ -442,7 +434,6 @@ ChaseOrderResult BybitClient::chase_order(const ChaseOrderRequest& req,
                                          const ChaseOrderOptions& opt) {
     impl_->start(req, opt);
 
-    // attende finché stop o timeout
     const auto start = std::chrono::steady_clock::now();
     while (!impl_->stop.load()) {
         if (std::chrono::steady_clock::now() - start > opt.timeout) {
