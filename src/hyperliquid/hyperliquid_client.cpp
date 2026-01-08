@@ -522,7 +522,7 @@ struct HyperliquidClient::Impl {
                     {"s", s_str},
                     {"r", false},
                     {"t", nlohmann::ordered_json({
-                        {"limit", nlohmann::ordered_json({{}})}
+                        {"limit", nlohmann::ordered_json({{"tif", "Gtc"}})}
                     })}
                 })
             })},
@@ -623,6 +623,7 @@ struct HyperliquidClient::Impl {
 
                 try {
                     json update = json::parse(msg->str);
+                    //std::cout << "WS update: " << update.dump() << std::endl;
 
                     if (!update.contains("channel")) {
                         return;

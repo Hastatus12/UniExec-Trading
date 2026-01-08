@@ -7,8 +7,8 @@ int main() {
         trading::hyperliquid::HyperliquidClient hl(private_key);
         
         trading::hyperliquid::ChaseOrderRequest req;
-        req.coin = "TRX";
-        req.size = 80;
+        req.coin = "BTC";
+        req.size = 0.00015;
         req.side = "Buy";
         
         trading::hyperliquid::ChaseOrderOptions opt;
