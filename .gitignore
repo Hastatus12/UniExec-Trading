@@ -51,5 +51,7 @@ desktop.ini
 *.swo
 
 # External dependencies (if not using vcpkg)
-# secp256k1*.h  # Uncomment if these are external
+secp256k1*.h
+hl_new.cpp
+utils.cpp
 

@@ -375,8 +375,6 @@ struct HyperliquidClient::Impl {
                 }
             }
     
-            // 2) Asset id: 0 è valido. Quindi NON usare 0 come sentinella.
-            // Consiglio: usa req.asset = -1 quando non lo sai.
             int asset_id = req.asset;
             if (asset_id < 0) {
                 asset_id = get_asset_id(req.coin);
@@ -619,7 +617,6 @@ struct HyperliquidClient::Impl {
                     return;
                 }
                 if (msg->type == ix::WebSocketMessageType::Close) {
-                    // close può arrivare anche “normale” dopo stop()
                     return;
                 }
                 if (msg->type != ix::WebSocketMessageType::Message) return;
@@ -761,12 +758,10 @@ struct HyperliquidClient::Impl {
                                 distance_percent = ((ord_price - ask) / ask) * 100.0;
                             }
 
-                            // Riprezzare se la distanza è > 0.1% (valore hardcoded)
                             const double REPRICE_THRESHOLD_PCT = 0.01;
                             if (distance_percent > REPRICE_THRESHOLD_PCT ||
                                 distance_percent < -REPRICE_THRESHOLD_PCT)
                             {
-                                // blocca per evitare doppio send
                                 {
                                     std::lock_guard<std::mutex> lk(mtx);
                                     if (awaiting_order) return;
@@ -908,7 +903,6 @@ ChaseOrderResult HyperliquidClient::chase_order(ChaseOrderRequest& req,
                                                 const ChaseOrderOptions& opt) {
     impl_->start(req, opt);
 
-    // aspetta stop o timeout
     const auto t0 = std::chrono::steady_clock::now();
     while (!impl_->stop.load()) {
         if (std::chrono::steady_clock::now() - t0 > opt.timeout) {
