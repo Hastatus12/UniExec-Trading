@@ -1,0 +1,55 @@
+# Build artifacts
+build/
+*.obj
+*.exe
+*.pdb
+*.lib
+*.dll
+*.ilk
+*.exp
+*.log
+
+# Build scripts (Windows batch files)
+*.bat
+
+# Visual Studio
+.vs/
+*.vcxproj
+*.vcxproj.filters
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sdf
+*.opensdf
+*.db
+*.opendb
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+*.cmake
+CMakeLists.txt
+
+# Temporary files
+cl
+dir
+*.tmp
+*.bak
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# External dependencies (if not using vcpkg)
+# secp256k1*.h  # Uncomment if these are external
+
